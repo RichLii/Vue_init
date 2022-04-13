@@ -1,5 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '@/views/HomeView.vue'
+import SignUp from '@/views/SignUp.vue'
+import LogIn from '@/views/LogIn.vue'
+import DashBoard from '@/views/DashBoard.vue'
+import MyAccount from '@/views/Detail/MyAccount.vue'
+import store from '@/store'
+import axios from 'axios'
 
 const routes = [
   {
@@ -8,12 +14,30 @@ const routes = [
     component: HomeView
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/sign-up',
+    name: 'signup',
+    component: SignUp
+  },
+  {
+    path: '/log-in',
+    name: 'login',
+    component: LogIn
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: DashBoard,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+    path: '/dashboard/my-account',
+    name: 'myaccount',
+    component: MyAccount,
+    meta: {
+      requireAuth: true
+    }
   }
 ]
 
@@ -22,4 +46,18 @@ const router = createRouter({
   routes
 })
 
+router.beforeEach(async (to, from) => {
+  await store.dispatch('initialize')
+  if (to.matched.some(record => record.meta.requireAuth)) {
+    if (!store.state.access) {
+      console.log(12345)
+      return { name: 'login' }
+    } else {
+      axios.defaults.headers.common.Authorization = 'Bearer ' + store.state.access
+    }
+  }
+  if (to.matched[0].name === 'login' && store.state.access) {
+    return { name: 'myaccount' }
+  }
+})
 export default router

@@ -1,6 +1,6 @@
 <template>
   <div class="mx-10">
-    <div class="mb-8"><h1 class="title">Home</h1></div>
+    <div class="mb-8"><h1 class="title">DashBoard</h1></div>
   </div>
 </template>
 
