@@ -50,7 +50,6 @@ router.beforeEach(async (to, from) => {
   await store.dispatch('initialize')
   if (to.matched.some(record => record.meta.requireAuth)) {
     if (!store.state.access) {
-      console.log(12345)
       return { name: 'login' }
     } else {
       axios.defaults.headers.common.Authorization = 'Bearer ' + store.state.access
